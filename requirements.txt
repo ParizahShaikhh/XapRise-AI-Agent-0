@@ -1,0 +1,5 @@
+requests
+chainlit
+# json
+# aiohttp
+# typing
