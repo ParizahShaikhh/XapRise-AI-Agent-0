@@ -29,7 +29,6 @@ async def handle_agent_streaming(user_input: str):
             headers={"Content-Type": "application/json"}
         ) as response:
             
-            # Placeholder for streamed message
             msg = cl.Message(content="")
             await msg.send()
 
@@ -47,7 +46,12 @@ async def handle_agent_streaming(user_input: str):
                     if data["type"] == "text":
                         await msg.stream_token(data["content"])
 
+                    elif data["type"] == "agent_handoff" and data["new_agent"] == "health_wellness_agent":
+                        # Already on this agent — don't send anything
+                        continue
+
                     elif data["type"] == "agent_handoff":
+                        # Show handoff to another agent
                         transfer_msg = cl.Message(
                             content=data["message"],
                             author=data["new_agent"]
