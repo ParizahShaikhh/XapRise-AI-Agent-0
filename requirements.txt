@@ -1,5 +1,5 @@
 requests
 chainlit
 # json
-# aiohttp
+aiohttp
 # typing
