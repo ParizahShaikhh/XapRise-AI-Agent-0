@@ -5,12 +5,14 @@ from typing import List, Dict
 
 BASE_URL = "https://health-wellness-agent.vercel.app/stream_response/"
 
+
 def get_history() -> List[Dict]:
     history = cl.user_session.get("messages")
     if history is None:
         history = []
         cl.user_session.set("messages", history)
     return history
+
 
 @cl.on_chat_start
 async def chat_start():
@@ -21,6 +23,7 @@ async def chat_start():
     else:
         await cl.Message(content="Hey, I'm Health Wellness Agent. How can I help you today?").send()
 
+
 async def handle_agent_streaming(user_input: str):
     async with aiohttp.ClientSession() as session:
         async with session.post(
@@ -28,7 +31,7 @@ async def handle_agent_streaming(user_input: str):
             json={"user_input": user_input},
             headers={"Content-Type": "application/json"}
         ) as response:
-            
+
             msg = cl.Message(content="")
             await msg.send()
 
@@ -47,11 +50,9 @@ async def handle_agent_streaming(user_input: str):
                         await msg.stream_token(data["content"])
 
                     elif data["type"] == "agent_handoff" and data["new_agent"] == "health_wellness_agent":
-                        # Already on this agent — don't send anything
                         continue
 
                     elif data["type"] == "agent_handoff":
-                        # Show handoff to another agent
                         transfer_msg = cl.Message(
                             content=data["message"],
                             author=data["new_agent"]
